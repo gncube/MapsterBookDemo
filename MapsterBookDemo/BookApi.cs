@@ -32,7 +32,7 @@ public class BookApi
     [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
     [OpenApiParameter(name: "bookId", In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The **BookId** parameter")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(BookDto), Description = "The OK response")]
-    public async Task<IActionResult> GetById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "books/{bookId:int}")] HttpRequestData req, int bookId)
+    public async Task<IActionResult> GetById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "books/{bookId:int}")] HttpRequestData req, int bookId)
     {
         _logger.LogInformation("---> {FunctionName} function processed a request.", nameof(GetById));
 
@@ -64,7 +64,7 @@ public class BookApi
     [OpenApiOperation(operationId: "GetAll", tags: new[] { "Book" }, Summary = "GetAllBooks summary", Description = "GetAllBooks description.", Visibility = OpenApiVisibilityType.Important)]
     [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Book>), Description = "The OK response")]
-    public async Task<IActionResult> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "books")] HttpRequestData req)
+    public async Task<IActionResult> GetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = "books")] HttpRequestData req)
     {
         _logger.LogInformation("---> {FunctionName} function processed a request.", nameof(GetAll));
 
@@ -96,7 +96,7 @@ public class BookApi
     [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
     [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(BookDto), Required = true, Description = "Add bookDto.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Book), Description = "The OK response")]
-    public async Task<IActionResult> AddBook([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "books")] HttpRequestData req)
+    public async Task<IActionResult> AddBook([HttpTrigger(AuthorizationLevel.Function, "post", Route = "books")] HttpRequestData req)
     {
         _logger.LogInformation("---> {FunctionName} function processed a request.", nameof(AddBook));
 
@@ -126,7 +126,7 @@ public class BookApi
     [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
     [OpenApiParameter(name: "BookId", In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The **BookId** parameter")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Book), Description = "The OK response")]
-    public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "books/{bookId:int}")] HttpRequestData req, int bookId)
+    public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Function, "put", Route = "books/{bookId:int}")] HttpRequestData req, int bookId)
     {
         _logger.LogInformation("---> {FunctionName} function processed a request.", nameof(Update));
 
