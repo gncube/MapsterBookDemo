@@ -124,9 +124,9 @@ public class BookApi
     [Function(nameof(Update))]
     [OpenApiOperation(operationId: "Update", tags: new[] { "Book" }, Summary = "UpdateBook summary", Description = "UpdateBook description.", Visibility = OpenApiVisibilityType.Important)]
     [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
-    //[OpenApiParameter(name: "BookId", In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The **BookId** parameter")]
+    [OpenApiParameter(name: "BookId", In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The **BookId** parameter")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Book), Description = "The OK response")]
-    public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "books")] HttpRequestData req, int bookId)
+    public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "books/{bookId:int}")] HttpRequestData req, int bookId)
     {
         _logger.LogInformation("---> {FunctionName} function processed a request.", nameof(Update));
 

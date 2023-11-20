@@ -25,4 +25,10 @@
     <ProjectReference Include="..\MapsterBookDemo.Application\MapsterBookDemo.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="MapsterBookDemo.sqlite">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
