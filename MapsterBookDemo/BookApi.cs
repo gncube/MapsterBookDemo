@@ -1,5 +1,6 @@
 using Mapster;
 using MapsterBookDemo.Application.DTOs;
+using MapsterBookDemo.Application.Interfaces;
 using MapsterBookDemo.Domain.Models;
 using MapsterBookDemo.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +8,10 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System.Net;
+using System.Text.Json;
 
 namespace MapsterBookDemo;
 
@@ -19,12 +20,15 @@ public class BookApi
 {
     private readonly ILogger _logger;
     private readonly AppDbContext _context;
+    private readonly IRepository<Book, int> _repo;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-
-    public BookApi(ILoggerFactory loggerFactory, AppDbContext context)
+    public BookApi(ILoggerFactory loggerFactory, AppDbContext context, IRepository<Book, int> repo, JsonSerializerOptions jsonSerializerOptions)
     {
         _logger = loggerFactory.CreateLogger<BookApi>();
         _context = context;
+        _repo = repo;
+        _jsonSerializerOptions = jsonSerializerOptions;
     }
 
     [Function(nameof(GetById))]
@@ -38,10 +42,12 @@ public class BookApi
 
         try
         {
-            var bookDto = await _context.Books
-                .Where(b => b.Id == bookId)
-                .ProjectToType<BookDto>()
-                .FirstOrDefaultAsync();
+            //var bookDto = await _context.Books
+            //    .Where(b => b.Id == bookId)
+            //    .ProjectToType<BookDto>()
+            //    .FirstOrDefaultAsync();
+
+            var bookDto = await _repo.GetAsync(bookId);
 
             if (bookDto == null)
             {
@@ -70,9 +76,11 @@ public class BookApi
 
         try
         {
-            var bookResult = await _context.Books
-                .ProjectToType<BookDto>()
-                .ToListAsync();
+            //var bookResult = await _context.Books
+            //    .ProjectToType<BookDto>()
+            //    .ToListAsync();
+
+            var bookResult = await _repo.GetAllAsync();
 
             if (bookResult.Count() == 0)
             {
@@ -107,8 +115,10 @@ public class BookApi
 
             _logger.LogInformation($"---> Adding new book. {book}");
 
-            await _context.Books.AddAsync(book);
-            await _context.SaveChangesAsync();
+            //await _context.Books.AddAsync(book);
+            await _repo.AddAsync(book);
+
+            //await _context.SaveChangesAsync();           
 
             //return new CreatedResult($"/api/books/{book.Id}", book);
             //return new CreatedResult($"/api/books/{book.Id}", book.Adapt<BookDto>());
@@ -138,7 +148,8 @@ public class BookApi
                 return new BadRequestResult();
             }
 
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+            //var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+            var book = await _repo.GetAsync(bookId);
 
             if (book == null)
             {
@@ -148,7 +159,7 @@ public class BookApi
 
             bookDto.ToModel(book);
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
 
             return new OkObjectResult(book.Adapt<BookDto>());
         }

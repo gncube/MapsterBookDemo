@@ -1,5 +1,8 @@
-﻿using MapsterBookDemo.Configurations;
+﻿using MapsterBookDemo.Application.Interfaces;
+using MapsterBookDemo.Configurations;
+using MapsterBookDemo.Domain.Models;
 using MapsterBookDemo.Infrastructure.Data;
+using MapsterBookDemo.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +18,8 @@ public static class RegisterDependencyInjection
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite($"Data Source={databasePath}"));
+
+        services.AddScoped<IRepository<Book, int>, BookRepository>();
 
         services.AddMapster();
         return services;
